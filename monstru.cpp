@@ -2,7 +2,7 @@
 #include "Supravietuitor.h"
 #include <iostream>
 
-// Constructor de initializare
+
 Monstru::Monstru(const std::string& nume, int viata, int energie, 
                  int x, int y, int putereUmbra)
     : jucator(nume, viata, energie, x, y), putereUmbra(putereUmbra), 
@@ -10,14 +10,14 @@ Monstru::Monstru(const std::string& nume, int viata, int energie,
     initializeazaAbilitatiIntuneric();
 }
 
-// Functie privata pentru abilitati intuneric
+
 void Monstru::initializeazaAbilitatiIntuneric() {
-    // Monștrii au abilitati offensive/umbră
-    jucator.getAbilitati().clear(); // Sterge abilitatile standard
-    // Adauga abilitati specifice monștrilor
+   
+    jucator.getAbilitati().clear();
+    
 }
 
-// Absorbe energie - FUNCTIE COMPLEXA
+
 void Monstru::absorbeEnergie(Supravietuitor& target) {
     if (!esteInvizibil && target.getJucator().getEnergie() > 0) {
         int energieAbsorbita = target.getJucator().getEnergie() / 3;
@@ -26,7 +26,7 @@ void Monstru::absorbeEnergie(Supravietuitor& target) {
         jucator.setEnergie(jucator.getEnergie() + energieAbsorbita);
         putereUmbra += energieAbsorbita / 2;
         
-        // Scade energia target-ului
+     
         target.getJucator().setEnergie(target.getJucator().getEnergie() - energieAbsorbita);
         
         std::cout << jucator.getNume() << " a absorbit " << energieAbsorbita 
@@ -34,7 +34,7 @@ void Monstru::absorbeEnergie(Supravietuitor& target) {
     }
 }
 
-// Devine invizibil
+
 void Monstru::devineInvizibil() {
     if (jucator.getEnergie() >= 15 && !esteInvizibil) {
         esteInvizibil = true;
@@ -43,19 +43,19 @@ void Monstru::devineInvizibil() {
     }
 }
 
-// Calculeaza putere atac - FUNCTIE COMPLEXA
+
 int Monstru::calculeazaPutereAtac() const {
     int putere = putereUmbra;
     
-    // Bonus pentru energie absorbita
+ 
     putere += energieAbsorbita / 5;
     
-    // Bonus pentru invizibilitate
+
     if (esteInvizibil) {
         putere += 10;
     }
     
-    // Bonus pentru viata scazuta (furia)
+   
     if (jucator.getViata() < 30) {
         putere += 15;
     }
@@ -63,7 +63,7 @@ int Monstru::calculeazaPutereAtac() const {
     return putere;
 }
 
-// Operator <<
+
 std::ostream& operator<<(std::ostream& os, const Monstru& monstru) {
     os << "=== MONSTRU ===\n"
        << monstru.jucator
