@@ -1,50 +1,77 @@
 #include <iostream>
-#include <array>
+#include "Map.h"
+#include "Supravietuitor.h"
+#include "Monstru.h"
+
+using namespace std;
 
 int main() {
-    std::cout << "Hello, world!\n";
-    std::array<int, 100> v{};
-    int nr;
-    std::cout << "Introduceți nr: ";
-    /////////////////////////////////////////////////////////////////////////
-    /// Observație: dacă aveți nevoie să citiți date de intrare de la tastatură,
-    /// dați exemple de date de intrare folosind fișierul tastatura.txt
-    /// Trebuie să aveți în fișierul tastatura.txt suficiente date de intrare
-    /// (în formatul impus de voi) astfel încât execuția programului să se încheie.
-    /// De asemenea, trebuie să adăugați în acest fișier date de intrare
-    /// pentru cât mai multe ramuri de execuție.
-    /// Dorim să facem acest lucru pentru a automatiza testarea codului, fără să
-    /// mai pierdem timp de fiecare dată să introducem de la zero aceleași date de intrare.
-    ///
-    /// Pe GitHub Actions (bife), fișierul tastatura.txt este folosit
-    /// pentru a simula date introduse de la tastatură.
-    /// Bifele verifică dacă programul are erori de compilare, erori de memorie și memory leaks.
-    ///
-    /// Dacă nu puneți în tastatura.txt suficiente date de intrare, îmi rezerv dreptul să vă
-    /// testez codul cu ce date de intrare am chef și să nu pun notă dacă găsesc vreun bug.
-    /// Impun această cerință ca să învățați să faceți un demo și să arătați părțile din
-    /// program care merg (și să le evitați pe cele care nu merg).
-    ///
-    /////////////////////////////////////////////////////////////////////////
-    std::cin >> nr;
-    /////////////////////////////////////////////////////////////////////////
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "v[" << i << "] = ";
-        std::cin >> v[i];
+    cout << "=== ECOURILE LUMINII - JOC DE STRATEGIE ===" << endl;
+    
+    // 1. Creare harta
+    Harta harta(8);
+    
+    // 2. Creare supravietuitori
+    Supravietuitor erou1("Alex", 100, 50, 1, 1);
+    Supravietuitor erou2("Maria", 90, 60, 2, 3);
+    
+    // 3. Creare monstri
+    Monstru monstru1("Umbra", 80, 70, 6, 6, 15);
+    Monstru monstru2("Fantomă", 70, 80, 5, 4, 12);
+    
+    // 4. Adaugare pe harta
+    harta.adaugaSupravietuitor(erou1);
+    harta.adaugaSupravietuitor(erou2);
+    harta.adaugaMonstru(monstru1);
+    harta.adaugaMonstru(monstru2);
+    
+    // 5. Afisare starea initiala
+    cout << "\n--- STARE INITIALA ---" << endl;
+    harta.afiseazaHarta();
+    cout << erou1 << endl;
+    cout << erou2 << endl;
+    cout << monstru1 << endl;
+    cout << monstru2 << endl;
+    
+    // 6. Testare functionalitati
+    cout << "\n--- TESTARE FUNCTIONALITATI ---" << endl;
+    
+    // Supravietuitorii activeaza cristale
+    erou1.getJucator().setPozitie(2, 2); // Pozitioneaza pe cristal
+    if (erou1.activeazaCristal()) {
+        cout << "Cristal activat cu succes!" << endl;
     }
-    std::cout << "\n\n";
-    std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "- " << v[i] << "\n";
-    }
-    ///////////////////////////////////////////////////////////////////////////
-    /// Pentru date citite din fișier, NU folosiți tastatura.txt. Creați-vă voi
-    /// alt fișier propriu cu ce alt nume doriți.
-    /// Exemplu:
-    /// std::ifstream fis("date.txt");
-    /// for(int i = 0; i < nr2; ++i)
-    ///     fis >> v2[i];
-    ///
-    ///////////////////////////////////////////////////////////////////////////
+    
+    erou1.reparaCristal();
+    
+    // Monștrii folosesc abilitati
+    monstru1.devineInvizibil();
+    monstru1.absorbeEnergie(erou2);
+    
+    // 7. Deplasari si interactiuni
+    cout << "\n--- DEPLASARI SI INTERACTIUNI ---" << endl;
+    erou1.getJucator().deplasare(1, 0); // Dreapta
+    erou2.getJucator().deplasare(0, 1); // Jos
+    monstru1.getJucator().deplasare(-1, 0); // Stanga
+    
+    harta.afiseazaHarta();
+    harta.interactioneazaJucatori();
+    
+    // 8. Testare operator= si constructor copiere
+    cout << "\n--- TESTARE COPIERE ---" << endl;
+    Supravietuitor erouCopia = erou1; // Operator=
+    Monstru monstruCopia(monstru2);   // Constructor copiere
+    
+    cout << "Erou copiat: " << erouCopia.getJucator().getNume() << endl;
+    cout << "Monstru copiat: " << monstruCopia.getJucator().getNume() << endl;
+    
+    // 9. Afisare finala
+    cout << "\n--- STARE FINALA ---" << endl;
+    cout << erou1 << endl;
+    cout << erou2 << endl;
+    cout << monstru1 << endl;
+    cout << monstru2 << endl;
+    
+    cout << "\n=== JOC TERMINAT ===" << endl;
     return 0;
 }
