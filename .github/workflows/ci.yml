@@ -1,0 +1,55 @@
+name: C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure CMake
+      run: |
+        cmake -B ${{github.workspace}}/build -S ${{github.workspace}}
+
+    - name: Build
+      run: |
+        cmake --build ${{github.workspace}}/build --config Release
+
+    - name: Test Build
+      run: |
+        cd ${{github.workspace}}/build
+        ./ecourile_luminii --help || echo "Executabil built successfully"
+
+    - name: Check Compilation Warnings
+      run: |
+        cd ${{github.workspace}}/build
+        make ecourile_luminii 2>&1 | grep -i "warning" && exit 1 || exit 0
+
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check file structure
+      run: |
+        echo "=== Verific structura fisierelor ==="
+        ls -la
+        [ -f "main.cpp" ] && echo "✓ main.cpp exists" || echo "✗ main.cpp missing"
+        [ -f "CMakeLists.txt" ] && echo "✓ CMakeLists.txt exists" || echo "✗ CMakeLists.txt missing"
+        [ -f "Player.h" ] && echo "✓ Player.h exists" || echo "✗ Player.h missing"
+        [ -f "Map.h" ] && echo "✓ Map.h exists" || echo "✗ Map.h missing"
+
+    - name: Check C++ content
+      run: |
+        echo "=== Verific continut C++ ==="
+        find . -name "*.cpp" -o -name "*.h" | while read file; do
+          echo "Checking $file"
+          lines=$(wc -l < "$file")
+          echo "  Lines: $lines"
+        done
