@@ -1,7 +1,7 @@
 #ifndef SUPRAVIETUITOR_H
 #define SUPRAVIETUITOR_H
 
-#include "Jucator.h"
+#include "Player.h"
 
 class Supravietuitor : public Jucator {
 public:
