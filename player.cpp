@@ -1,95 +1,69 @@
-#include "Player.h"
+#include "Jucator.h"
 #include <iostream>
 #include <stdexcept>
 
+// Clasa de exceptie custom
+class EnergieInsuficienta : public std::runtime_error {
+public:
+    EnergieInsuficienta() : std::runtime_error("Eroare: Energie insuficienta pentru a folosi abilitatea!") {}
+};
 
+// Constructor de initializare
+// Apelam constructorul clasei de baza Entitate(nume, x, y)
 Jucator::Jucator(const std::string& nume, int viata, int energie, int x, int y)
-    : nume(nume), viata(viata), energie(energie), pozitieX(x), pozitieY(y) {
+    : Entitate(nume, x, y), viata(viata), energie(energie) {
     initializeazaAbilitatiStandard();
+    std::cout << "Constructor Jucator apelat pentru: " << nume << std::endl;
 }
 
-
+// Constructor de copiere
 Jucator::Jucator(const Jucator& other)
-    : nume(other.nume), viata(other.viata), energie(other.energie),
-      pozitieX(other.pozitieX), pozitieY(other.pozitieY), abilitati(other.abilitati) {
-    std::cout << "Constructor copiere Jucator: " << nume << std::endl;
+    : Entitate(other), viata(other.viata), energie(other.energie), abilitati(other.abilitati) {
+    std::cout << "Constructor de copiere Jucator apelat pentru: " << nume << std::endl;
 }
 
-
+// Operator= de copiere (Cerinta Tema 2)
 Jucator& Jucator::operator=(const Jucator& other) {
     if (this != &other) {
-        nume = other.nume;
-        viata = other.viata;
-        energie = other.energie;
-        pozitieX = other.pozitieX;
-        pozitieY = other.pozitieY;
-        abilitati = other.abilitati;
+        // Apelam operatorul de atribuire din clasa de baza
+        Entitate::operator=(other);
+        this->viata = other.viata;
+        this->energie = other.energie;
+        this->abilitati = other.abilitati;
     }
-    std::cout << "Operator= Jucator: " << nume << std::endl;
     return *this;
 }
 
-
+// Destructor virtual
 Jucator::~Jucator() {
-    std::cout << "Destructor Jucator: " << nume << std::endl;
+    std::cout << "Destructor Jucator apelat pentru: " << nume << std::endl;
 }
 
-
-void Jucator::initializeazaAbilitatiStandard() {
-    abilitati.push_back(Abilitate("Atac Basic", 10, 5, 1));
-    abilitati.push_back(Abilitate("Fortificare", 0, 10, 2));
-    abilitati.push_back(Abilitate("Ultimul Sus", 25, 20, 5));
+// Functii membre
+void Jucator::deplasare(int deltaX, int deltaY) {
+    // Folosim x si y mosteniti din Entitate (protected)
+    this->x += deltaX;
+    this->y += deltaY;
+    std::cout << nume << " s-a deplasat la pozitia (" << x << ", " << y << ")\n";
 }
-
-void Jucator::setPozitie(int x, int y) {
-    pozitieX = x;
-    pozitieY = y;
-}
-
 
 bool Jucator::esteInViata() const {
     return viata > 0;
 }
 
-
-void Jucator::deplasare(int deltaX, int deltaY) {
-    pozitieX += deltaX;
-    pozitieY += deltaY;
-    energie -= 1; 
-    if (energie < 0) energie = 0;
-}
-
-
-bool Jucator::poateFolosiAbilitate(int indexAbilitate) const {
-    if (indexAbilitate < 0 || indexAbilitate >= abilitati.size()) {
-        return false;
-    }
-    return abilitati[indexAbilitate].poateFiFolosita(energie);
-}
-
-
 void Jucator::folosesteAbilitate(int indexAbilitate) {
-    if (indexAbilitate < 0 || indexAbilitate >= abilitati.size()) {
-        throw std::out_of_range("Index abilitate invalid");
+    if (indexAbilitate < 0 || indexAbilitate >= (int)abilitati.size()) {
+        throw std::out_of_range("Index abilitate invalid!");
     }
-    
-    if (poateFolosiAbilitate(indexAbilitate)) {
-        abilitati[indexAbilitate].foloseste();
-        energie -= abilitati[indexAbilitate].getCostEnergie();
+
+    // Exemplu de aruncare a exceptiei custom (Cerinta Tema 2)
+    if (energie < 10) { 
+        throw EnergieInsuficienta();
     }
+
+    energie -= 10;
+    std::cout << nume << " a folosit abilitatea " << abilitati[indexAbilitate].getNume() << std::endl;
 }
 
-
-std::ostream& operator<<(std::ostream& os, const Jucator& jucator) {
-    os << "Jucator: " << jucator.nume 
-       << " | Viata: " << jucator.viata 
-       << " | Energie: " << jucator.energie 
-       << " | Pozitie: (" << jucator.pozitieX << "," << jucator.pozitieY << ")"
-       << "\nAbilitati:\n";
-    
-    for (size_t i = 0; i < jucator.abilitati.size(); ++i) {
-        os << "  " << i << ". " << jucator.abilitati[i] << "\n";
-    }
-    
-    return os;
+void Jucator::initializeazaAbilitatiStandard() {
 }
