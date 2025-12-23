@@ -2,7 +2,7 @@
 #include <vector>
 #include "Entitate.h"
 #include "Jucator.h"
-#include "Om.h"       
+#include "Supravietuitor.h"       
 #include "Cristal.h"  
 
 int main() {
