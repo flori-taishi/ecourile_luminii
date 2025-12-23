@@ -1,41 +1,28 @@
 #ifndef SUPRAVIETUITOR_H
 #define SUPRAVIETUITOR_H
 
-#include "Player.h"
-#include <vector>
+#include "Jucator.h"
 
-class Supravietuitor {
-private:
-    Jucator jucator;  // COMPUNERE cu Jucator!
-    bool areCristal;
-    int puncteLumina;
-    int cristaleActivate;
-
-    // Functii private
-    void initializeazaAbilitatiSpeciale();
-
+class Supravietuitor : public Jucator {
 public:
-    // Constructor de initializare
-    Supravietuitor(const std::string& nume = "", int viata = 100, int energie = 60, 
-                   int x = 0, int y = 0, bool cristal = false);
     
-    // Getters const
-    bool getAreCristal() const { return areCristal; }
-    int getPuncteLumina() const { return puncteLumina; }
-    int getCristaleActivate() const { return cristaleActivate; }
-    const Jucator& getJucator() const { return jucator; }
+    Supravietuitor(std::string nume, int x, int y) 
+        : Jucator(nume, 100, 50, x, y) {}
 
-    // Setters
-    void setAreCristal(bool cristal) { areCristal = cristal; }
-    void setPuncteLumina(int puncte) { puncteLumina = puncte; }
+  
+    void afisare(std::ostream& os) const override {
+        os << "[SUPRAVIETUITOR] " << nume << " | HP: " << viata 
+           << " | Poz: (" << x << "," << y << ")";
+    }
 
-    // Functii membre netriviale
-    bool activeazaCristal();
-    void reparaCristal();
-    int calculeazaBonusLumina() const;
-    
-    // Operator <<
-    friend std::ostream& operator<<(std::ostream& os, const Supravietuitor& supravietuitor);
+    void interactioneaza() override {
+        std::cout << nume << " cauta resurse sau repara un cristal...\n";
+    }
+
+  
+    Entitate* clone() const override {
+        return new Supravietuitor(*this);
+    }
 };
 
 #endif
